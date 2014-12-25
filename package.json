@@ -1,0 +1,27 @@
+{
+  "name": "helenmystic",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.coffee",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "bower install"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.10.6",
+    "compression": "^1.2.2",
+    "broccoli": "^0.13.3",
+    "bower": "^1.3.12",
+    "coffee-script": "^1.8.0",
+    "broccoli-slow-trees": "^1.0.0",
+    "rsvp": "^3.0.16",
+    "chalk": "^0.5.1",
+    "broccoli-coffee": "^0.3.0",
+    "broccoli-merge-trees": "^0.2.1",
+    "broccoli-browserify": "^0.1.0",
+    "broccoli-static-compiler": "^0.2.1",
+    "broccoli-concat": "0.0.12"
+  }
+}
