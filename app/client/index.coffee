@@ -19,7 +19,6 @@ updateDisplay = ->
   endDate.setHours 12, 0, 0, 0
 
   timeDifference = getTimeToDate endDate
-  timeDifference = 0
 
   if timeDifference > 0
     diffString = (timeDifference / 1000).toString()
