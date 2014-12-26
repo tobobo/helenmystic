@@ -11,7 +11,7 @@ client = 'app/client'
 appScripts = pickFiles client,
   srcDir: '/'
   destDir: '/'
-  files: ['**/*.coffee']
+  files: ['**/*.coffee', '**/*.js']
 
 appScripts = filterCoffeescript appScripts
 

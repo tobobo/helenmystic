@@ -1,3 +1,5 @@
+require './analytics'
+
 getTimeToDate = (date) ->
   defaultOffset = 480
 
@@ -24,6 +26,7 @@ updateDisplay = ->
     diffString = (timeDifference / 1000).toString()
     diffStringParts = diffString.split '.'
 
+    if not diffStringParts[1]? then diffStringParts[1] = '000'
     while diffStringParts[1]?.length < 3
       diffStringParts[1] += '0'
 
