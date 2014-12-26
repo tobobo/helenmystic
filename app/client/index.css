@@ -1,0 +1,11 @@
+body {
+  font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
+  background-color: #fffdf7;
+}
+
+#mystic {
+  margin: 150px 0 auto;
+  text-align: center;
+  font-size: 5em;
+  color: #736d55;
+}

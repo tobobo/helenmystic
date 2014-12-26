@@ -13,6 +13,5 @@
     "tests"
   ],
   "dependencies": {
-    "moment": "~2.8.4"
   }
 }
