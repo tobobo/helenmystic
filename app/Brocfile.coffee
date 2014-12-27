@@ -5,6 +5,7 @@ pickFiles = require 'broccoli-static-compiler'
 uglifyJS = require 'broccoli-uglify-js'
 cleanCSS = require 'broccoli-clean-css'
 concat = require 'broccoli-concat'
+inlineAssets = require './utils/broccoli-inline-assets'
 
 client = 'app/client'
 
@@ -44,4 +45,10 @@ staticFiles = pickFiles client,
   destDir: '/'
   files: ['favicon.ico']
 
-module.exports = mergeTrees [html, staticFiles, appScripts, appStyles]
+mergedAssets = mergeTrees [html, staticFiles, appScripts, appStyles]
+
+inlined = inlineAssets mergedAssets,
+  html: ['index.html']
+  assets: ['app.css', 'app.js']
+
+module.exports = inlined
