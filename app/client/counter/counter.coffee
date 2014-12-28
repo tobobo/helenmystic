@@ -1,4 +1,4 @@
-require './analytics'
+require '../analytics'
 
 HelenMysticCounter = require './helen-mystic-counter'
 

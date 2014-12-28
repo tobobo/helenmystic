@@ -17,7 +17,7 @@ appScripts = pickFiles client,
 appScripts = filterCoffeescript appScripts
 
 appScripts = browserify appScripts,
-  entries: ['./counter']
+  entries: ['./counter/counter']
   outputFile: 'counter.js'
 
 appStyles = pickFiles client,
@@ -26,7 +26,7 @@ appStyles = pickFiles client,
   files: ['**/*.css']
 
 appStyles = concat appStyles,
-  inputFiles: ['counter.css']
+  inputFiles: ['counter/counter.css']
   outputFile: '/counter.css'
 
 if process.env.NODE_ENV == 'production'
@@ -35,8 +35,8 @@ if process.env.NODE_ENV == 'production'
 
   appStyles = cleanCSS appStyles
 
-html = pickFiles client,
-  srcDir: '/'
+counterHTML = pickFiles client,
+  srcDir: '/counter'
   destDir: '/'
   files: ['**/*.html']
 
@@ -45,10 +45,10 @@ staticFiles = pickFiles client,
   destDir: '/'
   files: ['favicon.ico']
 
-mergedAssets = mergeTrees [html, staticFiles, appScripts, appStyles]
+mergedAssets = mergeTrees [counterHTML, staticFiles, appScripts, appStyles]
 
 inlined = inlineAssets mergedAssets,
   files:
-    'index-counter.html': ['counter.js', 'counter.css']
+    'counter.html': ['counter.js', 'counter.css']
 
 module.exports = inlined

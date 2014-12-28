@@ -17,7 +17,7 @@ build Brocfile
 .then (directory) ->
 
   app.get '/', (req, res) ->
-    res.sendFile path.join(directory, 'index-counter.html')
+    res.sendFile path.join(directory, 'counter.html')
 
   app.get '*', (req, res) -> res.redirect '/'
 
