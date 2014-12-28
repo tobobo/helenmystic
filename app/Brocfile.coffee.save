@@ -8,27 +8,27 @@ concat = require 'broccoli-concat'
 inlineAssets = require './utils/broccoli-inline-assets'
 
 client = 'app/client'
-counter = client + '/counter'
+counter = client + 'counter'
 
-appScripts = pickFiles client,
+appScripts = pickFiles counter,
   srcDir: '/'
   destDir: '/'
   files: ['**/*.coffee', '**/*.js']
 
 appScripts = filterCoffeescript appScripts
 
-counterScripts = browserify appScripts,
-  entries: ['./counter/index']
-  outputFile: 'counter/index.js'
+appScripts = browserify appScripts,
+  entries: ['./counter']
+  outputFile: 'counter.js'
 
-appStyles = pickFiles client,
+appStyles = pickFiles counter,
   srcDir: '/'
   destDir: '/'
   files: ['**/*.css']
 
 appStyles = concat appStyles,
-  inputFiles: ['counter/index.css']
-  outputFile: '/counter/index.css'
+  inputFiles: ['counter.css']
+  outputFile: '/counter.css'
 
 if process.env.NODE_ENV == 'production'
   appScripts = uglifyJS appScripts,
@@ -36,7 +36,7 @@ if process.env.NODE_ENV == 'production'
 
   appStyles = cleanCSS appStyles
 
-html = pickFiles client,
+html = pickFiles counter,
   srcDir: '/'
   destDir: '/'
   files: ['**/*.html']
@@ -50,12 +50,12 @@ counterAssets = mergeTrees [html, appScripts, appStyles]
 
 counterAssets = inlineAssets counterAssets,
   files:
-    'counter/index.html': ['index.js', 'index.css']
+    'index.html': ['counter.js', 'counter.css']
 
 counterAssets = pickFiles counterAssets,
-  srcDir: '/counter'
+  srcDir: '/'
   destDir: '/counter'
-  files: ['index.html']
+  files: 'index.html'
 
 mergedAssets = mergeTrees [commonFiles, counterAssets]
 

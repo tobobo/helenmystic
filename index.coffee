@@ -16,8 +16,11 @@ app.use (req, res, next) ->
 build Brocfile
 .then (directory) ->
 
-  app.get '/', (req, res) ->
-    res.sendFile path.join(directory, 'counter.html')
+  # app.get '/', (req, res) ->
+  #  res.sendFile path.join(directory, 'counter.html')
+
+  app.use express.static(path.join(directory, 'common'))  
+  app.use express.static(path.join(directory, 'counter'))
 
   app.get '*', (req, res) -> res.redirect '/'
 
