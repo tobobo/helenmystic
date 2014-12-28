@@ -48,7 +48,7 @@ staticFiles = pickFiles client,
 mergedAssets = mergeTrees [html, staticFiles, appScripts, appStyles]
 
 inlined = inlineAssets mergedAssets,
-  html: ['index.html']
-  assets: ['app.css', 'app.js']
+  files:
+    'index.html': ['app.js', 'app.css']
 
 module.exports = inlined

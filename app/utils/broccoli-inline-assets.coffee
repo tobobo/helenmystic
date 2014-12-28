@@ -10,71 +10,89 @@ class InlineAssets extends Filter
   targetExtension: 'html'
 
   constructor: (@inputTree, @options={}) ->
-    super inputTree, options
-    @extensions = @options.extensions or @extensions
-    @targetExtension = @options.targetExtension or @targetExtension
 
-    @html = @options.html
-    @assets = @options.assets
+    super inputTree, options
+    @files = @options.files
+
 
   write: (readTree, destDir) ->
+
     readTree(this.inputTree).then (srcDir) =>
-      @html = @listToGlobList @html
-      @assets = @listToGlobList @assets
+
+      for file, assets of @files
+        globbedAssets = @listToGlobList srcDir, assets
+        @listToGlobList srcDir, [file]
+        .forEach (path) =>
+          @files[path] = globbedAssets
+
       return super readTree, destDir
 
 
-  listToGlobList: (inputList) ->
-    destDir = @inputTree.tmpDestDir
+  canProcessFile: (relativePath) ->
 
-    result = []
-    inputList.forEach (pattern) ->
-      glob.sync(path.join(destDir, pattern)).forEach (file) ->
-        relPath = path.relative(destDir, file)
-        result.push relPath
+    super(relativePath) and @files[relativePath]?
 
-    result
+
+  processString: (string, filePath) ->
+
+    replacer = @createReplacer string, filePath
+
+    replacer.replace 'script[src]',
+      ($script) -> $script.attr 'src',
+      (source) -> """<script type="text/javascript">#{source}</script>"""
+
+    replacer.replace 'link[rel=stylesheet]',
+      ($style) -> $style.attr 'href',
+      (source) -> """<style type="text/css">#{source}</style>"""
+
+    replacer.html()
+
+
+  listToGlobList: (rootDir, inputList) ->
+
+    inputList.reduce (memo, pattern) ->
+      glob.sync path.join(rootDir, pattern)
+      .reduce (memo, file) ->
+        memo.push path.relative(rootDir, file)
+        memo
+      , memo
+    , []
+
 
   readFromTree: (filePath) ->
+
     fs.readFileSync path.join(@inputTree.tmpDestDir, filePath)
 
-  htmlPathToRelPath: (htmlDir, htmlPath) ->
-    if htmlPath.indexOf '/' == 0
-      htmlPath.slice 1
-    else
-      if htmlDir != '.'
-        path.relative '.', path.resolve(htmlDir, htmlPath)
+
+  createReplacer: (string, filePath) ->
+
+    $: cheerio.load string
+
+    htmlDir: path.dirname filePath
+
+    filePath: filePath
+
+    filter: @
+
+    htmlPathToRelPath: (htmlPath) ->
+      if htmlPath[0] == '/'
+        htmlPath[1..]
       else
-        htmlPath
+        if @htmlDir == '.'
+          htmlPath
+        else
+          path.relative '.', path.resolve(@htmlDir, htmlPath)
 
-  processString: (string, htmlPath) ->
-    htmlDir = path.dirname htmlPath
+    replace: (selector, getSourceFile, newEl) ->
+      @$(selector).each (key, element) =>
+        $el = @$ element
+        sourceFile = @htmlPathToRelPath getSourceFile($el)
+        if sourceFile in @filter.files[@filePath]
+          src = @filter.readFromTree sourceFile
+          $el.before(@$(newEl(src))).remove()
 
-    if htmlPath in @html
-      $ = cheerio.load string
-      filter = @
+    html: -> @$.html()
 
-      replaceEls = (selector, getSrc, createEl) ->
-        $(selector).each ->
-          $el = $ @
-          srcFile = getSrc $el
-          if filter.htmlPathToRelPath(htmlDir, srcFile) in filter.assets
-            src = filter.readFromTree srcFile
-            $newEl = createEl src
-            $el.before $newEl
-            $el.remove()
-
-      replaceEls 'script[src]',
-        ($script) -> $script.attr 'src',
-        (src) -> $ """<script type="text/javascript">#{src}</script>"""
-
-      replaceEls 'link[rel=stylesheet]',
-        ($style) -> $style.attr 'href',
-        (src) -> $ """<style type="text/css">#{src}</style>"""
-
-      return $.html();
-
-    return string
 
 module.exports = (inputTree, options)->
   new InlineAssets inputTree, options
