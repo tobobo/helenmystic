@@ -89,7 +89,7 @@ class InlineAssets extends Filter
         sourceFile = @htmlPathToRelPath getSourceFile($el)
         if sourceFile in @filter.files[@filePath]
           src = @filter.readFromTree sourceFile
-          $el.before(@$(newEl(src))).remove()
+          $el.before(@$(newEl("\n#{src}\n"))).remove()
 
     html: -> @$.html()
 

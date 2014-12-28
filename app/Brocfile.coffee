@@ -17,8 +17,8 @@ appScripts = pickFiles client,
 appScripts = filterCoffeescript appScripts
 
 appScripts = browserify appScripts,
-  entries: ['./index']
-  outputFile: 'app.js'
+  entries: ['./counter']
+  outputFile: 'counter.js'
 
 appStyles = pickFiles client,
   srcDir: '/'
@@ -26,8 +26,8 @@ appStyles = pickFiles client,
   files: ['**/*.css']
 
 appStyles = concat appStyles,
-  inputFiles: ['index.css']
-  outputFile: '/app.css'
+  inputFiles: ['counter.css']
+  outputFile: '/counter.css'
 
 if process.env.NODE_ENV == 'production'
   appScripts = uglifyJS appScripts,
@@ -49,6 +49,6 @@ mergedAssets = mergeTrees [html, staticFiles, appScripts, appStyles]
 
 inlined = inlineAssets mergedAssets,
   files:
-    'index.html': ['app.js', 'app.css']
+    'index-counter.html': ['counter.js', 'counter.css']
 
 module.exports = inlined

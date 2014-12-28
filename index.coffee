@@ -1,5 +1,6 @@
 express = require 'express'
 compression = require 'compression'
+path = require 'path'
 
 build = require './app/utils/build'
 Brocfile = require './Brocfile'
@@ -14,7 +15,13 @@ app.use (req, res, next) ->
 
 build Brocfile
 .then (directory) ->
-  app.use express.static(directory)
+
+  app.get '/', (req, res) ->
+    res.sendFile path.join(directory, 'index-counter.html')
+
+  app.get '*', (req, res) -> res.redirect '/'
+
+  # app.use express.static(directory)
 
   app.listen (port = process.env.PORT or 3000), ->
     console.log "app listening on port #{port}..."
