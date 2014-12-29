@@ -4,4 +4,6 @@ config = require '../config'
 
 require('../analytics') config
 
-helenMystic = new HelenMysticCounter 'mystic', new Date(config.endDate)
+helenMystic = new HelenMysticCounter 'mystic',
+  new Date(config.endDate),
+  config.defaultTimeZone

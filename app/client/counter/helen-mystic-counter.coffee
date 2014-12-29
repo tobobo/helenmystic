@@ -1,7 +1,18 @@
+timeToDate = require './time-to-date'
+addTrailingZeroes = require './add-trailing-zeroes'
+
 module.exports = class HelenMysticCounter
 
-  constructor: (@elID, @end) ->
-    @startup()
+  constructor: (@elID, @end, @timeZoneOffset) ->
+     @startup()
+
+
+  up: ->
+    @el().innerHTML = @str()
+
+    if @tr <= 0
+      @done()
+      @stopup()
 
 
   startup: ->
@@ -18,16 +29,15 @@ module.exports = class HelenMysticCounter
   el: -> document.getElementById(@elID)
 
 
-  up: -> @el().innerHTML = @str()
-
-
   swap: ->
     @el().style.color = 'white'
     window.document.body.style.backgroundColor = 'black'
 
 
   done: ->
+
     @swap()
+
     setTimeout ->
       window.location.reload()
     , 4000
@@ -37,39 +47,15 @@ module.exports = class HelenMysticCounter
 
     if not @updating then return
 
-    timeDifference = @int @end
+    timeRemaining = @int @end
 
-    if timeDifference > 0
-      @format timeDifference
+    @trs = if timeRemaining > 0
+      @format timeRemaining
     else
-      @done()
-      @stopup()
       '0.000'
 
 
-  int: (date) ->
-
-    defaultOffset = 480
-
-    currentDate = new Date()
-    currentTime = currentDate.getTime()
-    currentOffset = currentDate.getTimezoneOffset()
-
-    offsetDiff = defaultOffset - currentOffset
-    timeDiff = offsetDiff * 60 * 1000
-
-    futureTime = date.getTime()
-
-    futureTime - currentTime + timeDiff
+  int: (date) -> @tr = timeToDate date, @timeZoneOffset
 
 
-  format: (time) ->
-
-    diffString = (time / 1000).toString()
-    diffStringParts = diffString.split '.'
-
-    if not diffStringParts[1]? then diffStringParts[1] = '000'
-    while diffStringParts[1]?.length < 3
-      diffStringParts[1] += '0'
-
-    diffStringParts.join '.'
+  format: (number) -> addTrailingZeroes number, 3
