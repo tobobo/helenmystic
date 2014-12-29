@@ -29,6 +29,9 @@
     "broccoli-filter": "~0.1.10",
     "cheerio": "~0.18.0",
     "glob": "~4.3.2",
-    "broccoli-string-replace": "0.0.2"
+    "broccoli-string-replace": "0.0.2",
+    "grunt": "~0.4.5",
+    "grunt-express-server": "~0.4.19",
+    "grunt-contrib-watch": "~0.6.1"
   }
 }
