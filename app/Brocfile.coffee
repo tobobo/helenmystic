@@ -10,43 +10,38 @@ inlineAssets = require './utils/broccoli-inline-assets'
 client = 'app/client'
 counter = client + '/counter'
 
-appScripts = pickFiles client,
+counterScripts = pickFiles client,
   srcDir: '/'
   destDir: '/'
   files: ['**/*.coffee', '**/*.js']
 
-appScripts = filterCoffeescript appScripts
+counterScripts = filterCoffeescript counterScripts
 
-counterScripts = browserify appScripts,
+counterScripts = browserify counterScripts,
   entries: ['./counter/index']
   outputFile: 'counter/index.js'
 
-appStyles = pickFiles client,
-  srcDir: '/'
-  destDir: '/'
+counterStyles = pickFiles client,
+  srcDir: '/counter'
+  destDir: '/counter'
   files: ['**/*.css']
 
-appStyles = concat appStyles,
+counterStyles = concat counterStyles,
   inputFiles: ['counter/index.css']
   outputFile: '/counter/index.css'
 
 if process.env.NODE_ENV == 'production'
-  appScripts = uglifyJS appScripts,
+  counterScripts = uglifyJS counterScripts,
     mangle: true
 
-  appStyles = cleanCSS appStyles
+  counterStyles = cleanCSS counterStyles
 
-html = pickFiles client,
-  srcDir: '/'
-  destDir: '/'
+counterHTML = pickFiles client,
+  srcDir: '/counter'
+  destDir: '/counter'
   files: ['**/*.html']
 
-commonFiles = pickFiles client,
-  srcDir: '/'
-  destDir: '/common'
-  files: ['favicon.ico']
-
-counterAssets = mergeTrees [html, appScripts, appStyles]
+counterAssets = mergeTrees [counterHTML, counterScripts, counterStyles]
 
 counterAssets = inlineAssets counterAssets,
   files:
@@ -56,6 +51,11 @@ counterAssets = pickFiles counterAssets,
   srcDir: '/counter'
   destDir: '/counter'
   files: ['index.html']
+
+commonFiles = pickFiles client,
+  srcDir: '/'
+  destDir: '/common'
+  files: ['favicon.ico']
 
 mergedAssets = mergeTrees [commonFiles, counterAssets]
 

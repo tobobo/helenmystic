@@ -20,21 +20,22 @@ class InlineAssets extends Filter
     readTree(this.inputTree).then (srcDir) =>
 
       for file, assets of @files
-        globbedAssets = @listToGlobList srcDir, assets
-        @listToGlobList srcDir, [file]
-        .forEach (path) =>
-          @files[path] = globbedAssets
 
-      return super readTree, destDir
+        @listToGlobList srcDir, [file]
+        .forEach (globbedPath) =>
+          htmlPath = path.join srcDir, path.dirname(globbedPath)
+          globbedAssets = @listToGlobList htmlPath, assets, srcDir
+          delete @files.file
+          @files[globbedPath] = globbedAssets
+
+      super readTree, destDir
 
 
   canProcessFile: (relativePath) ->
-
     super(relativePath) and @files[relativePath]?
 
 
   processString: (string, filePath) ->
-
     replacer = @createReplacer string, filePath
 
     replacer.replace 'script[src]',
@@ -48,12 +49,12 @@ class InlineAssets extends Filter
     replacer.html()
 
 
-  listToGlobList: (rootDir, inputList) ->
-
+  listToGlobList: (rootDir, inputList, outputRoot) ->
+    outputRoot = outputRoot or rootDir
     inputList.reduce (memo, pattern) ->
       glob.sync path.join(rootDir, pattern)
       .reduce (memo, file) ->
-        memo.push path.relative(rootDir, file)
+        memo.push path.relative(outputRoot, file)
         memo
       , memo
     , []
@@ -74,24 +75,25 @@ class InlineAssets extends Filter
 
     filter: @
 
-    htmlPathToRelPath: (htmlPath) ->
-      if htmlPath[0] == '/'
-        htmlPath[1..]
-      else
-        if @htmlDir == '.'
-          htmlPath
-        else
-          path.relative '.', path.resolve(@htmlDir, htmlPath)
-
     replace: (selector, getSourceFile, newEl) ->
       @$(selector).each (key, element) =>
         $el = @$ element
-        sourceFile = @htmlPathToRelPath getSourceFile($el)
+        sourceFile = @filter.htmlPathToRelPath @htmlDir, getSourceFile($el)
         if sourceFile in @filter.files[@filePath]
           src = @filter.readFromTree sourceFile
           $el.before(@$(newEl("\n#{src}\n"))).remove()
 
     html: -> @$.html()
+
+
+  htmlPathToRelPath: (dir, htmlPath) ->
+    if htmlPath[0] == '/'
+      htmlPath[1..]
+    else
+      if dir == '.'
+        htmlPath
+      else
+        path.relative '.', path.resolve(dir, htmlPath)
 
 
 module.exports = (inputTree, options)->

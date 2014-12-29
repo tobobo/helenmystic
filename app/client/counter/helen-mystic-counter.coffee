@@ -1,4 +1,4 @@
-module.exports = class HelenMystic
+module.exports = class HelenMysticCounter
 
   constructor: (@elID, @end) ->
     @startup()

@@ -16,15 +16,10 @@ app.use (req, res, next) ->
 build Brocfile
 .then (directory) ->
 
-  # app.get '/', (req, res) ->
-  #  res.sendFile path.join(directory, 'counter.html')
-
-  app.use express.static(path.join(directory, 'common'))  
+  app.use express.static(path.join(directory, 'common'))
   app.use express.static(path.join(directory, 'counter'))
 
   app.get '*', (req, res) -> res.redirect '/'
-
-  # app.use express.static(directory)
 
   app.listen (port = process.env.PORT or 3000), ->
     console.log "app listening on port #{port}..."
