@@ -1,5 +1,5 @@
-timeToDate = require './time-to-date'
-addTrailingZeroes = require './add-trailing-zeroes'
+timeToDate = require './utils/time-to-date'
+addTrailingZeroes = require './utils/add-trailing-zeroes'
 
 module.exports = class HelenMysticCounter
 
@@ -58,4 +58,4 @@ module.exports = class HelenMysticCounter
   int: (date) -> @tr = timeToDate date, @timeZoneOffset
 
 
-  format: (number) -> addTrailingZeroes number, 3
+  format: (number) -> addTrailingZeroes number/1000, 3
