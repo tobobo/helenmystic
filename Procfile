@@ -1,1 +1,1 @@
-web: node_modules/.bin/coffee index.coffee
+web: node_modules/.bin/grunt server:production
