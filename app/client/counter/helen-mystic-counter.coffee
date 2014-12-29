@@ -5,23 +5,44 @@ module.exports = class HelenMysticCounter
 
 
   startup: ->
+    @updating = true
     (run = => @up())()
     @intvl = setInterval run, 37
 
 
-  stopup: -> clearInterval @intvl
+  stopup: ->
+    @updating = false
+    clearInterval @intvl
 
 
-  up: -> document.getElementById(@elID).innerHTML = @str()
+  el: -> document.getElementById(@elID)
+
+
+  up: -> @el().innerHTML = @str()
+
+
+  swap: ->
+    @el().style.color = 'white'
+    window.document.body.style.backgroundColor = 'black'
+
+
+  done: ->
+    @swap()
+    setTimeout ->
+      window.location.reload()
+    , 4000
 
 
   str: ->
+
+    if not @updating then return
 
     timeDifference = @int @end
 
     if timeDifference > 0
       @format timeDifference
     else
+      @done()
       @stopup()
       '0.000'
 

@@ -5,7 +5,11 @@ path = require 'path'
 build = require './app/utils/build'
 Brocfile = require './Brocfile'
 
+config = require('./config')()
+
 app = express()
+
+app.set 'config', config
 
 app.use compression()
 
@@ -17,11 +21,17 @@ build Brocfile
 .then (directory) ->
 
   app.use express.static(path.join(directory, 'common'))
-  app.use express.static(path.join(directory, 'counter'))
+
+  app.use (req, res, next) ->
+    if new Date() < app.get('config').endDate
+      express.static(path.join(directory, 'counter')) req, res, next
+    else
+      res.send 'howdy'
 
   app.get '*', (req, res) -> res.redirect '/'
 
-  app.listen (port = process.env.PORT or 3000), ->
+  port = app.get('config').port
+  app.listen port, ->
     console.log "app listening on port #{port}..."
 
 .catch (error) ->

@@ -1,10 +1,7 @@
-require '../analytics'
-
 HelenMysticCounter = require './helen-mystic-counter'
 
-janFirstNoon = new Date()
-janFirstNoon.setFullYear 2015
-janFirstNoon.setMonth 0, 1
-janFirstNoon.setHours 12, 0, 0, 0
+config = require '../config'
 
-helenMystic = new HelenMysticCounter 'mystic', janFirstNoon
+require('../analytics') config
+
+helenMystic = new HelenMysticCounter 'mystic', new Date(config.endDate)

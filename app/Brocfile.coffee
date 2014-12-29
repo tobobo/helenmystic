@@ -5,15 +5,23 @@ pickFiles = require 'broccoli-static-compiler'
 uglifyJS = require 'broccoli-uglify-js'
 cleanCSS = require 'broccoli-clean-css'
 concat = require 'broccoli-concat'
+replace = require 'broccoli-string-replace'
 inlineAssets = require './utils/broccoli-inline-assets'
 
+config = require('../config')()
 client = 'app/client'
-counter = client + '/counter'
 
 counterScripts = pickFiles client,
   srcDir: '/'
   destDir: '/'
-  files: ['**/*.coffee', '**/*.js']
+  files: ['**/*.coffee']
+
+counterScripts = replace counterScripts,
+  files: ['config.coffee']
+  patterns: [
+    match: /\{\{\{COUNTER_CONFIG\}\}\}/
+    replacement: JSON.stringify config.client
+  ]
 
 counterScripts = filterCoffeescript counterScripts
 
