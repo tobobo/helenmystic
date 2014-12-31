@@ -16,3 +16,4 @@ module.exports = (env) ->
   client:
     endDate: endDate
     gaKey: gaKey
+    defaultTimeZone: 480
