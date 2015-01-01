@@ -26,7 +26,7 @@ build Brocfile
     if new Date() < app.get('config').endDate
       express.static(path.join(directory, 'counter')) req, res, next
     else
-      res.send 'howdy'
+      res.redirect 'http://helenmystic.bandcamp.com'
 
   app.get '*', (req, res) -> res.redirect '/'
 
